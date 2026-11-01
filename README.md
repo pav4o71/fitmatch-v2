@@ -18,12 +18,15 @@ If the ankles are visible, height is scaled from nose to ankle (higher accuracy)
 ## Project structure
 
 ```
-app.py                     Streamlit UI
-src/body_profiler.py       Photo -> {"shoulder_cm", "chest_cm"}
+app.py                     Streamlit wizard UI (setup, pose guide, capture, results)
+src/body_profiler.py       Photo -> {"shoulder_cm", "chest_cm"} with a pose quality gate
 src/size_matcher.py        Brand size charts and boundary-warning logic
-assets/                    pose_landmarker_heavy.task model
+assets/                    pose_landmarker_heavy.task model, style.css, pose_guide.png
+.streamlit/config.toml     Theme
 tests/                     pytest suite
-requirements.txt
+test_photo.jpg.JPG         Sample photo used by the tests
+packages.txt               Linux system packages for Streamlit Cloud
+requirements.txt           Python dependencies
 ```
 
 ## Run locally
