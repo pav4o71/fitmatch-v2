@@ -26,6 +26,23 @@ def get_profiler() -> BodyProfiler:
     return BodyProfiler()
 
 
+def show_pose_guide() -> None:
+    """Renders the pose instructions and the reference photo, if available."""
+    with st.expander("📸 How to pose for accurate sizing"):
+        st.markdown(
+            "1. Stand straight, facing the camera directly.\n"
+            "2. Keep your arms slightly away from your body (A-pose).\n"
+            "3. Ensure your head and feet are visible in the frame."
+        )
+        guide_path = Path(__file__).parent / "assets" / "pose_guide.png"
+        try:
+            if not guide_path.is_file():
+                raise FileNotFoundError(guide_path)
+            st.image(str(guide_path), caption="Ideal pose for AI measurement")
+        except (FileNotFoundError, OSError):
+            st.info("Reference photo coming soon - follow the steps above.")
+
+
 def analyse(photo: Any, height_cm: float) -> dict:
     """Saves the photo to a temp file and returns the body measurements."""
     suffix = Path(getattr(photo, "name", "photo.jpg")).suffix or ".jpg"
@@ -65,6 +82,8 @@ height_cm = st.sidebar.slider("Your real height (cm)", 140, 210, 175)
 st.markdown('<div class="app-title">FitMatch AI</div>', unsafe_allow_html=True)
 st.markdown("**Snap a photo, get your size.** Our AI measures your shoulders and chest, "
             "then finds your best fit at your favourite brand.")
+
+show_pose_guide()
 
 tab_camera, tab_upload = st.tabs(["📷 Take Photo", "📁 Upload Image"])
 with tab_camera:
