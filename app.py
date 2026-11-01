@@ -10,6 +10,16 @@ from src.size_matcher import list_brands, recommend_size
 st.set_page_config(page_title="FitMatch AI", page_icon="👕", layout="wide")
 
 
+def inject_css() -> None:
+    """Injects assets/style.css into the page."""
+    css_path = Path(__file__).parent / "assets" / "style.css"
+    css_content = css_path.read_text(encoding="utf-8")
+    st.markdown(f"<style>{css_content}</style>", unsafe_allow_html=True)
+
+
+inject_css()
+
+
 @st.cache_resource
 def get_profiler() -> BodyProfiler:
     """Loads the MediaPipe model once per server process."""
@@ -38,11 +48,12 @@ def show_results(photo: Any, measurements: dict, brand: str) -> None:
         if not result["size"]:
             st.error(result["message"])
             return
-        st.success(f"Your recommended {brand} size is **{result['size']}**")
-        c1, c2, c3 = st.columns(3)
-        c1.metric("Size", result["size"])
-        c2.metric("Chest (est.)", f"{measurements['chest_cm']} cm")
-        c3.metric("Shoulders", f"{measurements['shoulder_cm']} cm")
+        with st.container(key="results-card"):
+            st.success(f"Your recommended {brand} size is **{result['size']}**")
+            c1, c2, c3 = st.columns(3)
+            c1.metric("Size", result["size"])
+            c2.metric("Chest (est.)", f"{measurements['chest_cm']} cm")
+            c3.metric("Shoulders", f"{measurements['shoulder_cm']} cm")
         if result["boundary_warning"]:
             st.warning(result["boundary_warning"])
 
@@ -51,7 +62,7 @@ st.sidebar.header("⚙️ Settings")
 brand = st.sidebar.selectbox("Target brand", list_brands())
 height_cm = st.sidebar.slider("Your real height (cm)", 140, 210, 175)
 
-st.title("👕 FitMatch AI")
+st.markdown('<div class="app-title">FitMatch AI</div>', unsafe_allow_html=True)
 st.markdown("**Snap a photo, get your size.** Our AI measures your shoulders and chest, "
             "then finds your best fit at your favourite brand.")
 
